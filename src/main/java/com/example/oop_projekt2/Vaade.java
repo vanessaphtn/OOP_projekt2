@@ -256,7 +256,7 @@ public class Vaade extends Application {
         Button MStagasi = new Button("Tagasi");
 
         BorderPane morseSõnaksjuur = new BorderPane(MSkeskmineOsa);
-        morseTäheksjuur.setBottom(MTtagasi);
+        morseSõnaksjuur.setBottom(MStagasi);
 
         Scene morseSõnaksStseen = new Scene(morseSõnaksjuur);
 
