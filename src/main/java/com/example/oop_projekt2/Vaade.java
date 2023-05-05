@@ -115,6 +115,7 @@ public class Vaade extends Application {
         Button TMtagasi = new Button("Tagasi");
 
         BorderPane tähtMorseksJuur = new BorderPane(keskmineOsa);
+        tähtMorseksJuur.setBackground(Background.fill(Color.rgb(250,231,215)));
         tähtMorseksJuur.setBottom(TMtagasi);
 
         Scene tähtMorseksStseen = new Scene(tähtMorseksJuur);
@@ -159,6 +160,7 @@ public class Vaade extends Application {
         Button MTtagasi = new Button("Tagasi");
 
         BorderPane morseTäheksjuur = new BorderPane(MTkeskmineOsa);
+        morseTäheksjuur.setBackground(Background.fill(Color.rgb(190,225,240)));
         morseTäheksjuur.setBottom(MTtagasi);
 
         Scene morseTäheksStseen = new Scene(morseTäheksjuur);
@@ -213,6 +215,7 @@ public class Vaade extends Application {
         Button SMtagasi = new Button("Tagasi");
 
         BorderPane sõnaMorseksjuur = new BorderPane(SMkeskmineOsa);
+        sõnaMorseksjuur.setBackground(Background.fill(Color.rgb(122,122,250)));
         sõnaMorseksjuur.setBottom(SMtagasi);
 
         Scene sõnaMorseksStseen = new Scene(sõnaMorseksjuur);
@@ -256,6 +259,7 @@ public class Vaade extends Application {
         Button MStagasi = new Button("Tagasi");
 
         BorderPane morseSõnaksjuur = new BorderPane(MSkeskmineOsa);
+        morseSõnaksjuur.setBackground(Background.fill(Color.rgb(250,174,212)));
         morseSõnaksjuur.setBottom(MStagasi);
 
         Scene morseSõnaksStseen = new Scene(morseSõnaksjuur);
