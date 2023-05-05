@@ -5,4 +5,6 @@ module com.example.oop_projekt2 {
 
     opens com.example.oop_projekt2 to javafx.fxml;
     exports com.example.oop_projekt2;
+    exports Programm;
+    opens Programm to javafx.fxml;
 }
