@@ -1,4 +1,5 @@
-package Programm;
+package com.example.oop_projekt2;
+
 import java.util.Scanner;
 
 import static java.lang.Math.random;
