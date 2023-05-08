@@ -2,6 +2,7 @@ package com.example.oop_projekt2;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -26,7 +27,9 @@ public class Vaade extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        //Main menüü
+
+
+        //MAIN MENÜÜ
 
 
         Text pealkiri = new Text(20, 40, "Menüü");
@@ -52,12 +55,15 @@ public class Vaade extends Application {
         HBox alumine = new HBox(sõnaMorseks, morseSõnaks);
         ülemine.setAlignment(Pos.CENTER);
         alumine.setAlignment(Pos.CENTER);
+        ülemine.setSpacing(5);
+        alumine.setSpacing(5);
 
         Button juhis = new Button("?");
 
 
         VBox vertikaal = new VBox(pealkiri, juhend, ülemine, alumine);
         vertikaal.setAlignment(Pos.CENTER);
+        vertikaal.setSpacing(5);
         BorderPane juur = new BorderPane(vertikaal);
         juur.setRight(juhis);
 
@@ -65,31 +71,25 @@ public class Vaade extends Application {
 
         //juhised
         Text tekst = new Text(" Selles programmis saab 4 erinevat ülesannet lahendada: \n" +
-                "1) tähti morse koodi teisendada \n" +
-                "2) sõnasid morse koodi teisendada \n" +
-                "3) tähti morse koodist eesti keelde teisendada \n" +
-                "4) sõnasid morse koodist eesti keelde teisendada");
+                "1) tähti morse koodi teisendada \n selleks klõpsa ruudul kirjaga TÄHT\n" +
+                "2) sõnasid morse koodi teisendada \n selleks klõpsa ruudul kirjaga SÕNA\n" +
+                "3) tähti morse koodist eesti keelde teisendada \n selleks klõpsa ruudul kirjaga" +
+                " -/*-*-/****/- \n" +
+                "4) sõnasid morse koodist eesti keelde teisendada\n selleks klõpsa ruudul kirjaga" +
+                " ***/**--*/-*/*-");
 
         BorderPane juurMJ = new BorderPane(tekst);
-        Scene stseenMJ = new Scene(juurMJ, 400,150);
+        Scene stseenMJ = new Scene(juurMJ, 400, 200);
         Stage lavaMJ = new Stage();
         lavaMJ.setScene(stseenMJ);
 
-        juhis.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                lavaMJ.show();
-            }
-        });
-        juhis.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                lavaMJ.hide();
-            }
-        });
+        juhis.setOnMouseEntered(event -> lavaMJ.show());
+        juhis.setOnMouseExited(event -> lavaMJ.hide());
 
 
-        //Täht morseks
+
+        //TÄHT -> MORSE
+
 
         Text TMküsimus = new Text("Küsimus");
         TMküsimus.setFont(new Font(25));
@@ -97,97 +97,114 @@ public class Vaade extends Application {
         Button tärn = new Button("*");
         Button kriips = new Button("-");
 
-        HBox nupud = new HBox(tärn,kriips);
+        HBox nupud = new HBox(tärn, kriips);
         nupud.setAlignment(Pos.CENTER);
 
         TextField sisestus = new TextField();
-        Text kontrolliTekst = new Text(20,10,"Kontrolli");
-        kontrolliTekst.setFont(new Font(11));
-        Circle nupp = new Circle(20,Color.GREEN);
-        StackPane stackPane = new StackPane(nupp,kontrolliTekst);
+        Button TMnupp = new Button("Kontrolli");
 
-        HBox tekstiväli = new HBox(sisestus,stackPane);
+        HBox tekstiväli = new HBox(sisestus, TMnupp);
         tekstiväli.setAlignment(Pos.CENTER);
+        tekstiväli.setSpacing(5);
 
-        VBox keskmineOsa = new VBox(TMküsimus,tekstiväli,nupud);
+        VBox keskmineOsa = new VBox(TMküsimus, tekstiväli, nupud);
         keskmineOsa.setAlignment(Pos.CENTER);
 
         Button TMtagasi = new Button("Tagasi");
+        Button TMjuhis = new Button("?");
 
         BorderPane tähtMorseksJuur = new BorderPane(keskmineOsa);
-        tähtMorseksJuur.setBackground(Background.fill(Color.rgb(250,231,215)));
+        tähtMorseksJuur.setBackground(Background.fill(Color.rgb(250, 231, 215)));
         tähtMorseksJuur.setBottom(TMtagasi);
+        tähtMorseksJuur.setRight(TMjuhis);
 
-        Scene tähtMorseksStseen = new Scene(tähtMorseksJuur);
+        Scene tähtMorseksStseen = new Scene(tähtMorseksJuur, 500, 400);
 
         Stage tähtMorseksLava = new Stage();
         tähtMorseksLava.setScene(tähtMorseksStseen);
 
-        tähtMorseks.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                tähtMorseksLava.show();
-                primaryStage.hide();
-            }
+        tähtMorseks.setOnMouseClicked(event -> {
+            tähtMorseksLava.show();
+            primaryStage.hide();
         });
 
-        TMtagasi.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                tähtMorseksLava.hide();
-                primaryStage.show();
-            }
+        TMtagasi.setOnMouseClicked(event -> {
+            tähtMorseksLava.hide();
+            primaryStage.show();
         });
 
+        //juhised
+        Text TMtekst = new Text("Kirjuta teksitlahtrisse oma vastuseks * ja - kombinatsioon või \n" +
+                "kasuta kirjutamiseks nuppe\n" +
+                "Tulemuse teada saamiseks vajuta kontrolli nupul.");
+
+        BorderPane TMjuhisJuur = new BorderPane(TMtekst);
+        Scene TMjuhisStseen = new Scene(TMjuhisJuur, 400, 100);
+        Stage TMjuhisLava = new Stage();
+        TMjuhisLava.setScene(TMjuhisStseen);
+
+        TMjuhis.setOnMouseEntered(event -> TMjuhisLava.show());
+        TMjuhis.setOnMouseExited(event -> TMjuhisLava.hide());
 
 
         // MORSE -> TÄHEKS
+
+
         Text MTküsimus = new Text("Küsimus");
         MTküsimus.setFont(new Font(25));
 
         TextField MTsisestus = new TextField();
-        Text MTkontrolliTekst = new Text(20,10,"Kontrolli");
-        MTkontrolliTekst.setFont(new Font(11));
-        Circle MTnupp = new Circle(20,Color.GREEN);
-        StackPane MTstackPane = new StackPane(MTnupp,MTkontrolliTekst);
 
-        HBox MTtekstiväli = new HBox(MTsisestus,MTstackPane);
+        Button MTnupp = new Button("Kontrolli");
+
+        HBox MTtekstiväli = new HBox(MTsisestus, MTnupp);
+        MTtekstiväli.setSpacing(5);
         MTtekstiväli.setAlignment(Pos.CENTER);
+
 
         VBox MTkeskmineOsa = new VBox(MTküsimus, MTtekstiväli);
         MTkeskmineOsa.setAlignment(Pos.CENTER);
 
+
         Button MTtagasi = new Button("Tagasi");
+        Button MTjuhis = new Button("?");
 
         BorderPane morseTäheksjuur = new BorderPane(MTkeskmineOsa);
-        morseTäheksjuur.setBackground(Background.fill(Color.rgb(190,225,240)));
+        morseTäheksjuur.setBackground(Background.fill(Color.rgb(190, 225, 240)));
         morseTäheksjuur.setBottom(MTtagasi);
+        morseTäheksjuur.setRight(MTjuhis);
 
-        Scene morseTäheksStseen = new Scene(morseTäheksjuur);
+        Scene morseTäheksStseen = new Scene(morseTäheksjuur, 500, 400);
 
         Stage morseTäheksLava = new Stage();
         morseTäheksLava.setScene(morseTäheksStseen);
 
 
-        morseTäheks.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                morseTäheksLava.show();
-                primaryStage.hide();
-            }
+        morseTäheks.setOnMouseClicked(event -> {
+            morseTäheksLava.show();
+            primaryStage.hide();
         });
 
-        MTtagasi.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                morseTäheksLava.hide();
-                primaryStage.show();
-            }
+        MTtagasi.setOnMouseClicked(event -> {
+            morseTäheksLava.hide();
+            primaryStage.show();
         });
 
+        //juhised
+        Text MTtekst = new Text("Kirjuta teksitlahtrisse oma vastuseks üks täht.\n" +
+                "Tulemuse teada saamiseks vajuta kontrolli nupul. ");
+
+        BorderPane MTjuhisJuur = new BorderPane(MTtekst);
+        Scene MTjuhisStseen = new Scene(MTjuhisJuur, 400, 100);
+        Stage MTjuhisLava = new Stage();
+        MTjuhisLava.setScene(MTjuhisStseen);
+
+        MTjuhis.setOnMouseEntered(event -> MTjuhisLava.show());
+        MTjuhis.setOnMouseExited(event -> MTjuhisLava.hide());
 
 
         // SÕNA -> MORSEKS
+
 
         Text SMküsimus = new Text("Küsimus");
         SMküsimus.setFont(new Font(25));
@@ -196,96 +213,109 @@ public class Vaade extends Application {
         Button SMkriips = new Button("-");
         Button kaldkriips = new Button("/");
 
-        HBox SMnupud = new HBox(SMtärn,SMkriips);
+        HBox SMnupud = new HBox(SMtärn, SMkriips);
         SMnupud.getChildren().add(kaldkriips);
         SMnupud.setAlignment(Pos.CENTER);
 
         TextField SMsisestus = new TextField();
-        Text SMkontrolliTekst = new Text(20,10,"Kontrolli");
-        SMkontrolliTekst.setFont(new Font(11));
-        Circle SMnupp = new Circle(20,Color.GREEN);
-        StackPane SMstackPane = new StackPane(SMnupp,SMkontrolliTekst);
 
-        HBox SMtekstiväli = new HBox(SMsisestus,SMstackPane);
+        Button SMnupp = new Button("Kontrolli");
+
+        HBox SMtekstiväli = new HBox(SMsisestus, SMnupp);
         SMtekstiväli.setAlignment(Pos.CENTER);
+        SMtekstiväli.setSpacing(5);
 
-        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli,SMnupud);
+        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli, SMnupud);
         SMkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button SMtagasi = new Button("Tagasi");
+        Button SMjuhis = new Button("?");
 
         BorderPane sõnaMorseksjuur = new BorderPane(SMkeskmineOsa);
-        sõnaMorseksjuur.setBackground(Background.fill(Color.rgb(122,122,250)));
+        sõnaMorseksjuur.setBackground(Background.fill(Color.rgb(122, 122, 250)));
         sõnaMorseksjuur.setBottom(SMtagasi);
+        sõnaMorseksjuur.setRight(SMjuhis);
 
-        Scene sõnaMorseksStseen = new Scene(sõnaMorseksjuur);
+        Scene sõnaMorseksStseen = new Scene(sõnaMorseksjuur, 500, 400);
 
         Stage sõnaMorseksLava = new Stage();
         sõnaMorseksLava.setScene(sõnaMorseksStseen);
 
-        sõnaMorseks.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                sõnaMorseksLava.show();
-                primaryStage.hide();
-            }
+        sõnaMorseks.setOnMouseClicked(event -> {
+            sõnaMorseksLava.show();
+            primaryStage.hide();
         });
 
-        SMtagasi.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                sõnaMorseksLava.hide();
-                primaryStage.show();
-            }
+        SMtagasi.setOnMouseClicked(event -> {
+            sõnaMorseksLava.hide();
+            primaryStage.show();
         });
+
+        //juhised
+        Text SMtekst = new Text("Kirjuta teksitlahtrisse oma vastuseks *, - ja / kombinatsioon või \n" +
+                "kasuta kirjutamiseks nuppe. \n" +
+                "Tulemuse teada saamiseks vajuta kontrolli nupul.");
+
+        BorderPane SMjuhisJuur = new BorderPane(SMtekst);
+        Scene SMjuhisStseen = new Scene(SMjuhisJuur, 400, 100);
+        Stage SMjuhisLava = new Stage();
+        SMjuhisLava.setScene(SMjuhisStseen);
+
+        SMjuhis.setOnMouseEntered(event -> SMjuhisLava.show());
+        SMjuhis.setOnMouseExited(event -> SMjuhisLava.hide());
+
 
         // MORSE -> SÕNAKS
+
 
         Text MSküsimus = new Text("Küsimus");
         MSküsimus.setFont(new Font(25));
 
         TextField MSsisestus = new TextField();
-        Text MSkontrolliTekst = new Text(20,10,"Kontrolli");
-        MSkontrolliTekst.setFont(new Font(11));
-        Circle MSnupp = new Circle(20,Color.GREEN);
-        StackPane MSstackPane = new StackPane(MSnupp,MSkontrolliTekst);
 
-        HBox MStekstiväli = new HBox(MSsisestus,MSstackPane);
+        Button MSnupp = new Button("Kontrolli");
+
+        HBox MStekstiväli = new HBox(MSsisestus, MSnupp);
         MStekstiväli.setAlignment(Pos.CENTER);
+        MStekstiväli.setSpacing(5);
 
         VBox MSkeskmineOsa = new VBox(MSküsimus, MStekstiväli);
         MSkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button MStagasi = new Button("Tagasi");
+        Button MSjuhis = new Button("?");
 
         BorderPane morseSõnaksjuur = new BorderPane(MSkeskmineOsa);
-        morseSõnaksjuur.setBackground(Background.fill(Color.rgb(250,174,212)));
+        morseSõnaksjuur.setBackground(Background.fill(Color.rgb(250, 174, 212)));
         morseSõnaksjuur.setBottom(MStagasi);
+        morseSõnaksjuur.setRight(MSjuhis);
 
-        Scene morseSõnaksStseen = new Scene(morseSõnaksjuur);
+        Scene morseSõnaksStseen = new Scene(morseSõnaksjuur, 500, 400);
 
         Stage morseSõnaksLava = new Stage();
         morseSõnaksLava.setScene(morseSõnaksStseen);
 
 
-        morseSõnaks.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                morseSõnaksLava.show();
-                primaryStage.hide();
-            }
+        morseSõnaks.setOnMouseClicked(event -> {
+            morseSõnaksLava.show();
+            primaryStage.hide();
         });
 
-        MStagasi.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                morseSõnaksLava.hide();
-                primaryStage.show();
-            }
+        MStagasi.setOnMouseClicked(event -> {
+            morseSõnaksLava.hide();
+            primaryStage.show();
         });
+        //juhised
+        Text MStekst = new Text("Kirjuta teksitlahtrisse oma vastus. \n" +
+                "Tulemuse teada saamiseks vajuta kontrolli nupul.");
 
+        BorderPane MSjuhisJuur = new BorderPane(MStekst);
+        Scene MSjuhisStseen = new Scene(MSjuhisJuur, 400, 100);
+        Stage MSjuhisLava = new Stage();
+        MSjuhisLava.setScene(MSjuhisStseen);
 
-
+        MSjuhis.setOnMouseEntered(event -> MSjuhisLava.show());
+        MSjuhis.setOnMouseExited(event -> MSjuhisLava.hide());
 
 
         primaryStage.setTitle("Morse koodi õppimine");
