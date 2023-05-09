@@ -20,7 +20,7 @@ public class Tähed {
         return tähed;
     }
 
-    String[] suvaline() {
+     public String[] suvaline() {
         int suvalineIndeks = (int) (random() * tähed.length);
         return tähed[suvalineIndeks];
     }
@@ -88,6 +88,17 @@ public class Tähed {
                 break;
             }
         }
+    }
+
+    public boolean kontrolli(String kasutajaVastus, String küsimus, int indeks1, int indeks2){
+        for (String[] paar : tähed) {
+            if(paar[indeks1].equals(küsimus)){
+                String õigeVastus = paar[indeks2];
+                if(õigeVastus.equals(kasutajaVastus)){
+                    return true;
+                } return false;
+            }
+        } return false;
     }
 }
 

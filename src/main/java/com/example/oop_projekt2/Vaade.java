@@ -18,6 +18,10 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Vaade extends Application {
 
     public static void main(String[] args) {
@@ -26,6 +30,9 @@ public class Vaade extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        List<String[]> s = new ArrayList<>(Arrays.asList(new String[]{"KASS", "-*-/*-/***/***"}, new String[]{"KOER", "-*-/---/*/*-*"}, new String[]{"EMA", "*/--/*-"}, new String[]{"ISA", "**/***/*-"}));
+        Tähed tähed = new Tähed();
+        Sõnad sõnad = new Sõnad(s,tähed);
 
 
 
@@ -90,10 +97,15 @@ public class Vaade extends Application {
 
         //TÄHT -> MORSE
 
+        //küsimus
+        Text TMlause = new Text("Kirjutage morse koodis: ");
+        Text TMsuvalineTäht = new Text(tähed.suvaline()[0]);
+        TMsuvalineTäht.setFont(new Font(25));
+        TMlause.setFont(new Font (25));
+        HBox TMküsimus = new HBox(TMlause,TMsuvalineTäht);
+        TMküsimus.setAlignment(Pos.CENTER);
 
-        Text TMküsimus = new Text("Küsimus");
-        TMküsimus.setFont(new Font(25));
-
+        //nupud, mida vajutada
         Button tärn = new Button("*");
         Button kriips = new Button("-");
 
@@ -102,12 +114,13 @@ public class Vaade extends Application {
 
         TextField sisestus = new TextField();
         Button TMnupp = new Button("Kontrolli");
+        Text TMvastuseÕigsus = new Text("");
 
         HBox tekstiväli = new HBox(sisestus, TMnupp);
         tekstiväli.setAlignment(Pos.CENTER);
         tekstiväli.setSpacing(5);
 
-        VBox keskmineOsa = new VBox(TMküsimus, tekstiväli, nupud);
+        VBox keskmineOsa = new VBox(TMküsimus, tekstiväli,TMvastuseÕigsus, nupud);
         keskmineOsa.setAlignment(Pos.CENTER);
 
         Button TMtagasi = new Button("Tagasi");
@@ -123,12 +136,32 @@ public class Vaade extends Application {
         Stage tähtMorseksLava = new Stage();
         tähtMorseksLava.setScene(tähtMorseksStseen);
 
-        tähtMorseks.setOnMouseClicked(event -> {
+        //aktiveerime nuppude töö
+        tärn.setOnMouseClicked(event ->{ //tärni lisamine
+            String tärnike = tärn.getText();
+            sisestus.appendText(tärnike);
+        });
+
+        kriips.setOnMouseClicked(event ->{ //kriipsu lisamine
+            String kriipsuke = kriips.getText();
+            sisestus.appendText(kriipsuke);
+        });
+
+        TMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
+            String sisestatudVastus = sisestus.getText();
+            if(tähed.kontrolli(sisestatudVastus, TMsuvalineTäht.getText(), 0, 1)){
+                TMvastuseÕigsus.setText("Õige vastus!");
+            } else TMvastuseÕigsus.setText("Vale vastus!");
+            TMsuvalineTäht.setText(tähed.suvaline()[0]);
+            sisestus.setText("");
+        });
+
+        tähtMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
             tähtMorseksLava.show();
             primaryStage.hide();
         });
 
-        TMtagasi.setOnMouseClicked(event -> {
+        TMtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
             tähtMorseksLava.hide();
             primaryStage.show();
         });
@@ -149,9 +182,13 @@ public class Vaade extends Application {
 
         // MORSE -> TÄHEKS
 
-
-        Text MTküsimus = new Text("Küsimus");
-        MTküsimus.setFont(new Font(25));
+        //küsimus
+        Text MTlause = new Text("Kirjutage täht: ");
+        Text MTsuvalineTäht = new Text(tähed.suvaline()[1]);
+        MTsuvalineTäht.setFont(new Font(25));
+        MTlause.setFont(new Font (25));
+        HBox MTküsimus = new HBox(MTlause,MTsuvalineTäht);
+        MTküsimus.setAlignment(Pos.CENTER);
 
         TextField MTsisestus = new TextField();
 
@@ -161,8 +198,10 @@ public class Vaade extends Application {
         MTtekstiväli.setSpacing(5);
         MTtekstiväli.setAlignment(Pos.CENTER);
 
+        Text MTvastuseÕigsus = new Text("");
 
-        VBox MTkeskmineOsa = new VBox(MTküsimus, MTtekstiväli);
+
+        VBox MTkeskmineOsa = new VBox(MTküsimus,MTtekstiväli, MTvastuseÕigsus);
         MTkeskmineOsa.setAlignment(Pos.CENTER);
 
 
@@ -178,6 +217,17 @@ public class Vaade extends Application {
 
         Stage morseTäheksLava = new Stage();
         morseTäheksLava.setScene(morseTäheksStseen);
+
+        //nuppude aktiveerimine
+        MTnupp.setOnMouseClicked(event -> { // 'kontroll' nupule vajutamine
+            String MTsisestatudVastus = MTsisestus.getText();
+            if(tähed.kontrolli(MTsisestatudVastus, MTsuvalineTäht.getText(), 1, 0)){
+                MTvastuseÕigsus.setText("Õige vastus!");
+            } else MTvastuseÕigsus.setText("Vale vastus!");
+            MTsuvalineTäht.setText(tähed.suvaline()[1]);
+            MTsisestus.setText("");
+
+        });
 
 
         morseTäheks.setOnMouseClicked(event -> {
@@ -205,9 +255,14 @@ public class Vaade extends Application {
 
         // SÕNA -> MORSEKS
 
+        //küsimus
+        Text SMlause = new Text("Kirjutage morse koodis: ");
+        Text SMsuvalineSõna = new Text(sõnad.suvaline()[0]);
+        SMsuvalineSõna.setFont(new Font(25));
+        SMlause.setFont(new Font (25));
+        HBox SMküsimus = new HBox(SMlause,SMsuvalineSõna);
+        SMküsimus.setAlignment(Pos.CENTER);
 
-        Text SMküsimus = new Text("Küsimus");
-        SMküsimus.setFont(new Font(25));
 
         Button SMtärn = new Button("*");
         Button SMkriips = new Button("-");
@@ -225,7 +280,9 @@ public class Vaade extends Application {
         SMtekstiväli.setAlignment(Pos.CENTER);
         SMtekstiväli.setSpacing(5);
 
-        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli, SMnupud);
+        Text SMvastuseÕigsus = new Text("");
+
+        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli,SMvastuseÕigsus, SMnupud);
         SMkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button SMtagasi = new Button("Tagasi");
@@ -241,12 +298,38 @@ public class Vaade extends Application {
         Stage sõnaMorseksLava = new Stage();
         sõnaMorseksLava.setScene(sõnaMorseksStseen);
 
-        sõnaMorseks.setOnMouseClicked(event -> {
+        //nupude aktiveerimine
+
+        SMtärn.setOnMouseClicked(event ->{ //tärni lisamine
+            String SMtärnike = SMtärn.getText();
+            SMsisestus.appendText(SMtärnike);
+        });
+
+        SMkriips.setOnMouseClicked(event ->{ //kriipsu lisamine
+            String SMkriipsuke = SMkriips.getText();
+            SMsisestus.appendText(SMkriipsuke);
+        });
+
+        kaldkriips.setOnMouseClicked(event -> { //kaldkriipsu lisamine
+            String kaldkriipsuke = kaldkriips.getText();
+            SMsisestus.appendText(kaldkriipsuke);
+        });
+
+        SMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
+            String SMsisestatudVastus = SMsisestus.getText();
+            if(sõnad.kontrolli(SMsisestatudVastus, SMsuvalineSõna.getText(), 0, 1)){
+                SMvastuseÕigsus.setText("Õige vastus!");
+            } else SMvastuseÕigsus.setText("Vale vastus!");
+            SMsuvalineSõna.setText(sõnad.suvaline()[0]);
+            SMsisestus.setText("");
+        });
+
+        sõnaMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
             sõnaMorseksLava.show();
             primaryStage.hide();
         });
 
-        SMtagasi.setOnMouseClicked(event -> {
+        SMtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
             sõnaMorseksLava.hide();
             primaryStage.show();
         });
@@ -268,8 +351,12 @@ public class Vaade extends Application {
         // MORSE -> SÕNAKS
 
 
-        Text MSküsimus = new Text("Küsimus");
-        MSküsimus.setFont(new Font(25));
+        Text MSlause = new Text("Kirjutage sõna: ");
+        Text MSsuvalineSõna = new Text(sõnad.suvaline()[1]);
+        MSsuvalineSõna.setFont(new Font(25));
+        MSlause.setFont(new Font (25));
+        HBox MSküsimus = new HBox(MSlause,MSsuvalineSõna);
+        MSküsimus.setAlignment(Pos.CENTER);
 
         TextField MSsisestus = new TextField();
 
@@ -279,7 +366,9 @@ public class Vaade extends Application {
         MStekstiväli.setAlignment(Pos.CENTER);
         MStekstiväli.setSpacing(5);
 
-        VBox MSkeskmineOsa = new VBox(MSküsimus, MStekstiväli);
+        Text MSvastuseÕigsus = new Text("");
+
+        VBox MSkeskmineOsa = new VBox(MSküsimus, MStekstiväli, MSvastuseÕigsus);
         MSkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button MStagasi = new Button("Tagasi");
@@ -294,6 +383,16 @@ public class Vaade extends Application {
 
         Stage morseSõnaksLava = new Stage();
         morseSõnaksLava.setScene(morseSõnaksStseen);
+
+        //nuppude aktiveerimine
+        MSnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
+            String MSsisestatudVastus = MSsisestus.getText();
+            if(sõnad.kontrolli(MSsisestatudVastus, MSsuvalineSõna.getText(), 1, 0)){
+                MSvastuseÕigsus.setText("Õige vastus!");
+            } else MSvastuseÕigsus.setText("Vale vastus!");
+            MSsuvalineSõna.setText(sõnad.suvaline()[1]);
+            MSsisestus.setText("");
+        });
 
 
         morseSõnaks.setOnMouseClicked(event -> {

@@ -4,10 +4,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Tähed tähed = new Tähed();
-        Sõnad sõnad1 = new Sõnad(new String[]{"-*-/*-/***/***", "-*-/---/*/*-*", "*/--/*-", "**/***/*-", "***-/*/-*/-**", "---*/-**/*", "-*-/---/---/*-**"});
-        Sõnad sõnad2 = new Sõnad(new String[]{"KASS", "KOER", "EMA", "ISA", "VEND", "ÕDE", "KOOL"});
+        //Sõnad sõnad1 = new Sõnad(new String[]{"-*-/*-/***/***", "-*-/---/*/*-*", "*/--/*-", "**/***/*-", "***-/*/-*/-**", "---*/-**/*", "-*-/---/---/*-**"});
+        //Sõnad sõnad2 = new Sõnad(new String[]{"KASS", "KOER", "EMA", "ISA", "VEND", "ÕDE", "KOOL"});
 
-        boolean käib = true;
+      /**  boolean käib = true;
         while (käib) {
             Juhised.mainJuhised();
 
@@ -26,8 +26,8 @@ public class Main {
                 //sisestuse kontroll
             }
         }
-        System.out.println();
-        System.out.println("****/*/*-/-** *-/*/--*/*-!");
-        System.out.println("(HEAD AEGA!)");
+        System.out.println();*/
+        //System.out.println("****/*/*-/-** *-/*/--*/*-!");
+        //System.out.println("(HEAD AEGA!)");*/
     }
 }

@@ -1,19 +1,33 @@
 package com.example.oop_projekt2;
 
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.Math.random;
 
 public class Sõnad {
-    private String[] sõnad;
+    private List<String[]> sõnad;
+    private Tähed tähed;
 
-    public Sõnad(String[] sõnad) {
+    public Sõnad(List<String[]> sõnad, Tähed tähed) {
         this.sõnad = sõnad;
+        this.tähed = tähed;
     }
 
-    public String suvaline() {
-        int suvalineIndeks = (int) (random() * sõnad.length);
-        return sõnad[suvalineIndeks];
+    public String[] suvaline() {
+        int suvalineIndeks = (int) (random() * sõnad.size());
+        return sõnad.get(suvalineIndeks);
+    }
+
+    public boolean kontrolli(String kasutajaVastus, String küsimus, int indeks1, int indeks2){
+        for (String[] sõna : sõnad) {
+            if(sõna[indeks1].equals(küsimus)){
+                String õigeVastus = sõna[indeks2];
+                if(õigeVastus.equals(kasutajaVastus)){
+                    return true;
+                } return false;
+            }
+        } return false;
     }
 
     //see vihje hakkab sõna algusest tähthaaval vastust andma
@@ -37,7 +51,7 @@ public class Sõnad {
     }
 
     //sõna morsekeelseks sõnaks
-    public String sõnaTeisendus(String sõna, String lõikamine, String sidumine, int indeks1, int indeks2) {
+    /**public String sõnaTeisendus(String sõna, String lõikamine, String sidumine, int indeks1, int indeks2) {
         String[] sõnaTähed = sõna.split(lõikamine);
         String sõnaTeisendus = "";
         Tähed tähed = new Tähed();
@@ -52,9 +66,9 @@ public class Sõnad {
         if (sidumine.equals("/"))
             sõnaTeisendus = sõnaTeisendus.substring(0, sõnaTeisendus.length() - 1); //kui seotakse "/" sellega, siis siin eemaltatakse viimane kaldkriips
         return sõnaTeisendus;
-    }
+    } */
 
-    public void sõnaVõrdlus(String lõikamine, String sidumine, int indeks1, int indeks2) {
+    /**public void sõnaVõrdlus(String lõikamine, String sidumine, int indeks1, int indeks2) {
 
         while (true) {
             String suvalineSõna = suvaline();
@@ -110,4 +124,7 @@ public class Sõnad {
             }
         }
     }
+}
+ */
+
 }
