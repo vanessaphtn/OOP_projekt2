@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class Vaade extends Application {
 
@@ -32,8 +33,7 @@ public class Vaade extends Application {
     public void start(Stage primaryStage) {
         List<String[]> s = new ArrayList<>(Arrays.asList(new String[]{"KASS", "-*-/*-/***/***"}, new String[]{"KOER", "-*-/---/*/*-*"}, new String[]{"EMA", "*/--/*-"}, new String[]{"ISA", "**/***/*-"}));
         Tähed tähed = new Tähed();
-        Sõnad sõnad = new Sõnad(s,tähed);
-
+        Sõnad sõnad = new Sõnad(s, tähed);
 
 
         //MAIN MENÜÜ
@@ -94,15 +94,15 @@ public class Vaade extends Application {
         juhis.setOnMouseExited(event -> lavaMJ.hide());
 
 
-
         //TÄHT -> MORSE
+
 
         //küsimus
         Text TMlause = new Text("Kirjutage morse koodis: ");
         Text TMsuvalineTäht = new Text(tähed.suvaline()[0]);
         TMsuvalineTäht.setFont(new Font(25));
-        TMlause.setFont(new Font (25));
-        HBox TMküsimus = new HBox(TMlause,TMsuvalineTäht);
+        TMlause.setFont(new Font(25));
+        HBox TMküsimus = new HBox(TMlause, TMsuvalineTäht);
         TMküsimus.setAlignment(Pos.CENTER);
 
         //nupud, mida vajutada
@@ -120,7 +120,7 @@ public class Vaade extends Application {
         tekstiväli.setAlignment(Pos.CENTER);
         tekstiväli.setSpacing(5);
 
-        VBox keskmineOsa = new VBox(TMküsimus, tekstiväli,TMvastuseÕigsus, nupud);
+        VBox keskmineOsa = new VBox(TMküsimus, tekstiväli, TMvastuseÕigsus, nupud);
         keskmineOsa.setAlignment(Pos.CENTER);
 
         Button TMtagasi = new Button("Tagasi");
@@ -137,23 +137,33 @@ public class Vaade extends Application {
         tähtMorseksLava.setScene(tähtMorseksStseen);
 
         //aktiveerime nuppude töö
-        tärn.setOnMouseClicked(event ->{ //tärni lisamine
+        tärn.setOnMouseClicked(event -> { //tärni lisamine
             String tärnike = tärn.getText();
             sisestus.appendText(tärnike);
         });
 
-        kriips.setOnMouseClicked(event ->{ //kriipsu lisamine
+        kriips.setOnMouseClicked(event -> { //kriipsu lisamine
             String kriipsuke = kriips.getText();
             sisestus.appendText(kriipsuke);
         });
 
         TMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
             String sisestatudVastus = sisestus.getText();
-            if(tähed.kontrolli(sisestatudVastus, TMsuvalineTäht.getText(), 0, 1)){
-                TMvastuseÕigsus.setText("Õige vastus!");
-            } else TMvastuseÕigsus.setText("Vale vastus!");
-            TMsuvalineTäht.setText(tähed.suvaline()[0]);
-            sisestus.setText("");
+            try {
+                for (Character sümbol : sisestatudVastus.toCharArray()) {
+                    if ("*-".indexOf(sümbol) == -1) {
+                        throw new ValeSisestusErind("Sisestada võib ainult * ja -");
+                    }
+                }
+                if (tähed.kontrolli(sisestatudVastus, TMsuvalineTäht.getText(), 0, 1)) {
+                    TMvastuseÕigsus.setText("Õige vastus!");
+                } else TMvastuseÕigsus.setText("Vale vastus!");
+                TMsuvalineTäht.setText(tähed.suvaline()[0]);
+                sisestus.setText("");
+            } catch (ValeSisestusErind e) {
+                TMvastuseÕigsus.setText("Sisestada võib ainult * ja -");
+                sisestus.setText("");
+            }
         });
 
         tähtMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
@@ -162,6 +172,8 @@ public class Vaade extends Application {
         });
 
         TMtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
+            TMsuvalineTäht.setText(tähed.suvaline()[0]);
+            TMvastuseÕigsus.setText("");
             tähtMorseksLava.hide();
             primaryStage.show();
         });
@@ -186,8 +198,8 @@ public class Vaade extends Application {
         Text MTlause = new Text("Kirjutage täht: ");
         Text MTsuvalineTäht = new Text(tähed.suvaline()[1]);
         MTsuvalineTäht.setFont(new Font(25));
-        MTlause.setFont(new Font (25));
-        HBox MTküsimus = new HBox(MTlause,MTsuvalineTäht);
+        MTlause.setFont(new Font(25));
+        HBox MTküsimus = new HBox(MTlause, MTsuvalineTäht);
         MTküsimus.setAlignment(Pos.CENTER);
 
         TextField MTsisestus = new TextField();
@@ -201,7 +213,7 @@ public class Vaade extends Application {
         Text MTvastuseÕigsus = new Text("");
 
 
-        VBox MTkeskmineOsa = new VBox(MTküsimus,MTtekstiväli, MTvastuseÕigsus);
+        VBox MTkeskmineOsa = new VBox(MTküsimus, MTtekstiväli, MTvastuseÕigsus);
         MTkeskmineOsa.setAlignment(Pos.CENTER);
 
 
@@ -220,22 +232,34 @@ public class Vaade extends Application {
 
         //nuppude aktiveerimine
         MTnupp.setOnMouseClicked(event -> { // 'kontroll' nupule vajutamine
-            String MTsisestatudVastus = MTsisestus.getText();
-            if(tähed.kontrolli(MTsisestatudVastus, MTsuvalineTäht.getText(), 1, 0)){
-                MTvastuseÕigsus.setText("Õige vastus!");
-            } else MTvastuseÕigsus.setText("Vale vastus!");
-            MTsuvalineTäht.setText(tähed.suvaline()[1]);
-            MTsisestus.setText("");
+            String MTsisestatudVastus = MTsisestus.getText().toUpperCase(Locale.ROOT);
+            try {
+                for (Character sümbol : MTsisestatudVastus.toCharArray()) {
+                    if (!Character.isLetter(sümbol)) {
+                        throw new ValeSisestusErind("Sisestada võib ainult tähti");
+                    }
+                }
+                if (tähed.kontrolli(MTsisestatudVastus, MTsuvalineTäht.getText(), 1, 0)) {
+                    MTvastuseÕigsus.setText("Õige vastus!");
+                } else MTvastuseÕigsus.setText("Vale vastus!");
+                MTsuvalineTäht.setText(tähed.suvaline()[1]);
+                MTsisestus.setText("");
+            } catch (ValeSisestusErind e) {
+                MTvastuseÕigsus.setText("Sisestada võib ainult tähti");
+                MTsisestus.setText("");
+            }
 
         });
 
 
-        morseTäheks.setOnMouseClicked(event -> {
+        morseTäheks.setOnMouseClicked(event -> { //ülesandesse
             morseTäheksLava.show();
             primaryStage.hide();
         });
 
-        MTtagasi.setOnMouseClicked(event -> {
+        MTtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
+            MTsuvalineTäht.setText(tähed.suvaline()[1]);
+            MTvastuseÕigsus.setText("");
             morseTäheksLava.hide();
             primaryStage.show();
         });
@@ -259,8 +283,8 @@ public class Vaade extends Application {
         Text SMlause = new Text("Kirjutage morse koodis: ");
         Text SMsuvalineSõna = new Text(sõnad.suvaline()[0]);
         SMsuvalineSõna.setFont(new Font(25));
-        SMlause.setFont(new Font (25));
-        HBox SMküsimus = new HBox(SMlause,SMsuvalineSõna);
+        SMlause.setFont(new Font(25));
+        HBox SMküsimus = new HBox(SMlause, SMsuvalineSõna);
         SMküsimus.setAlignment(Pos.CENTER);
 
 
@@ -282,7 +306,7 @@ public class Vaade extends Application {
 
         Text SMvastuseÕigsus = new Text("");
 
-        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli,SMvastuseÕigsus, SMnupud);
+        VBox SMkeskmineOsa = new VBox(SMküsimus, SMtekstiväli, SMvastuseÕigsus, SMnupud);
         SMkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button SMtagasi = new Button("Tagasi");
@@ -300,12 +324,12 @@ public class Vaade extends Application {
 
         //nupude aktiveerimine
 
-        SMtärn.setOnMouseClicked(event ->{ //tärni lisamine
+        SMtärn.setOnMouseClicked(event -> { //tärni lisamine
             String SMtärnike = SMtärn.getText();
             SMsisestus.appendText(SMtärnike);
         });
 
-        SMkriips.setOnMouseClicked(event ->{ //kriipsu lisamine
+        SMkriips.setOnMouseClicked(event -> { //kriipsu lisamine
             String SMkriipsuke = SMkriips.getText();
             SMsisestus.appendText(SMkriipsuke);
         });
@@ -317,11 +341,21 @@ public class Vaade extends Application {
 
         SMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
             String SMsisestatudVastus = SMsisestus.getText();
-            if(sõnad.kontrolli(SMsisestatudVastus, SMsuvalineSõna.getText(), 0, 1)){
-                SMvastuseÕigsus.setText("Õige vastus!");
-            } else SMvastuseÕigsus.setText("Vale vastus!");
-            SMsuvalineSõna.setText(sõnad.suvaline()[0]);
-            SMsisestus.setText("");
+            try {
+                for (Character sümbol : SMsisestatudVastus.toCharArray()) {
+                    if ("*-/".indexOf(sümbol) == -1) {
+                        throw new ValeSisestusErind("Sisestada võib ainult * ja -");
+                    }
+                }
+                if (sõnad.kontrolli(SMsisestatudVastus, SMsuvalineSõna.getText(), 0, 1)) {
+                    SMvastuseÕigsus.setText("Õige vastus!");
+                } else SMvastuseÕigsus.setText("Vale vastus!");
+                SMsuvalineSõna.setText(sõnad.suvaline()[0]);
+                SMsisestus.setText("");
+            } catch (ValeSisestusErind e) {
+                SMvastuseÕigsus.setText("Sisestada võib ainult *,- ja /");
+                SMsisestus.setText("");
+            }
         });
 
         sõnaMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
@@ -330,6 +364,8 @@ public class Vaade extends Application {
         });
 
         SMtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
+            SMsuvalineSõna.setText(sõnad.suvaline()[0]);
+            SMvastuseÕigsus.setText("");
             sõnaMorseksLava.hide();
             primaryStage.show();
         });
@@ -354,8 +390,8 @@ public class Vaade extends Application {
         Text MSlause = new Text("Kirjutage sõna: ");
         Text MSsuvalineSõna = new Text(sõnad.suvaline()[1]);
         MSsuvalineSõna.setFont(new Font(25));
-        MSlause.setFont(new Font (25));
-        HBox MSküsimus = new HBox(MSlause,MSsuvalineSõna);
+        MSlause.setFont(new Font(25));
+        HBox MSküsimus = new HBox(MSlause, MSsuvalineSõna);
         MSküsimus.setAlignment(Pos.CENTER);
 
         TextField MSsisestus = new TextField();
@@ -386,21 +422,32 @@ public class Vaade extends Application {
 
         //nuppude aktiveerimine
         MSnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
-            String MSsisestatudVastus = MSsisestus.getText();
-            if(sõnad.kontrolli(MSsisestatudVastus, MSsuvalineSõna.getText(), 1, 0)){
-                MSvastuseÕigsus.setText("Õige vastus!");
-            } else MSvastuseÕigsus.setText("Vale vastus!");
-            MSsuvalineSõna.setText(sõnad.suvaline()[1]);
-            MSsisestus.setText("");
+            String MSsisestatudVastus = MSsisestus.getText().toUpperCase(Locale.ROOT);
+            try {
+                for (Character sümbol : MSsisestatudVastus.toCharArray()) {
+                    if (!Character.isLetter(sümbol)) {
+                        throw new ValeSisestusErind("Sisestada võib ainult tähti");
+                    }
+                }
+                if (sõnad.kontrolli(MSsisestatudVastus, MSsuvalineSõna.getText(), 1, 0)) {
+                    MSvastuseÕigsus.setText("Õige vastus!");
+                } else MSvastuseÕigsus.setText("Vale vastus!");
+                MSsuvalineSõna.setText(sõnad.suvaline()[1]);
+                MSsisestus.setText("");
+            } catch (ValeSisestusErind e) {
+                MSvastuseÕigsus.setText("Sisestada võib ainult tähti");
+                MSsisestus.setText("");
+            }
         });
 
-
-        morseSõnaks.setOnMouseClicked(event -> {
+        morseSõnaks.setOnMouseClicked(event -> { //ülesande avamine
             morseSõnaksLava.show();
             primaryStage.hide();
         });
 
-        MStagasi.setOnMouseClicked(event -> {
+        MStagasi.setOnMouseClicked(event -> { //tagasi menüüsse
+            MSsuvalineSõna.setText(sõnad.suvaline()[1]);
+            MSvastuseÕigsus.setText("");
             morseSõnaksLava.hide();
             primaryStage.show();
         });
