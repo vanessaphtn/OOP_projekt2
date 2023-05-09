@@ -7,19 +7,21 @@ import java.util.Scanner;
 import static java.lang.Math.random;
 
 public class Tähed {
-    private String[][] tähed = {{"A", "*-"}, {"B", "-***"}, {"C", "-*-*"}, {"D", "-**"}, {"E", "*"},
-            {"F", "**-*"}, {"G", "--*"}, {"H", "****"}, {"I", "**"}, {"J", "*---"}, {"K", "-*-"}, {"L", "*-**"},
-            {"M", "--"}, {"N", "-*"}, {"O", "---"}, {"P", "*--*"}, {"Q", "--*-"}, {"R", "*-*"}, {"S", "***"},
-            {"Z", "--**"}, {"T", "-"}, {"U", "**-"}, {"V", "***-"}, {"W", "*--"}, {"Ä", "*-*-"}, {"Ö", "---*"}, {"Õ", "---*"},
-            {"Ü", "**--"}, {"X", "-**-"}, {"Y", "-*--"}};
+    private String[][] tähed;
 
-    // private String[][] tähed = {{"A", "*-"}, {"B", "-***"}, {"C", "-*-*"}, {"D", "-**"}}; katsetamiseks hea
-
+    public Tähed() {
+        this.tähed = new String[][]{{"A", "*-"}, {"B", "-***"}, {"C", "-*-*"}, {"D", "-**"}, {"E", "*"},
+                {"F", "**-*"}, {"G", "--*"}, {"H", "****"}, {"I", "**"}, {"J", "*---"}, {"K", "-*-"}, {"L", "*-**"},
+                {"M", "--"}, {"N", "-*"}, {"O", "---"}, {"P", "*--*"}, {"Q", "--*-"}, {"R", "*-*"}, {"S", "***"},
+                {"Z", "--**"}, {"T", "-"}, {"U", "**-"}, {"V", "***-"}, {"W", "*--"}, {"Ä", "*-*-"}, {"Ö", "---*"}, {"Õ", "---*"},
+                {"Ü", "**--"}, {"X", "-**-"}, {"Y", "-*--"}};;
+    }
 
     public String[][] getTähed() {
         return tähed;
     }
 
+    //võtab suvalise tähepaari (täht + täht morses)
      public String[] suvaline() {
         int suvalineIndeks = (int) (random() * tähed.length);
         return tähed[suvalineIndeks];
@@ -40,56 +42,10 @@ public class Tähed {
         //natuke ilusamaks vaja teha
     }
 
-    void teisendus(int i) {
-        int j = 0;
-        if (i == 0) j = 1;
-        ArrayList<String> õpitudTähed = new ArrayList<>();
 
-        while (true) {
-            String[] paar = suvaline();     //õigete vastuste korral tähed ei kordu
-            if (õpitudTähed.contains(paar[0])) continue;
-            System.out.println("Teisenda: " + paar[i]);
-            int valeVastus = 1;
-
-            while (true) {
-                Scanner input = new Scanner(System.in);
-                System.out.print("Sisesta vastus: ");
-                String sisestus = input.nextLine();
-
-                if (sisestus.equals(paar[j])) {
-                    System.out.println("Õige vastus \n");
-                    õpitudTähed.add(paar[0]);
-                    break;
-                } else {
-                    System.out.println("Proovi uuesti \n");
-                    System.out.println("Teisenda: " + paar[i]);
-                    if(valeVastus < paar[j].length()){
-                        System.out.print("vihje: ");        //kui vastad valesti saad sümbolhaaval vihjeid
-                        vihje(paar[j],valeVastus++);
-                        System.out.println();
-                    } else{
-                        System.out.println("Vastus oli: " + paar[j]);
-                        break;
-                    }
-
-                }
-            }
-            if (õpitudTähed.size() == tähed.length) {     //kui kõik tähed on korra õigesti kirjutatud, siis programm lõppeb ise
-                System.out.println("Kõik on õpitud!");
-                break;
-            }
-
-            Scanner input = new Scanner(System.in);
-            System.out.print("Soovid jätkata? (jah/ei) ");
-            String jätkamine = input.nextLine();
-
-            if (jätkamine.equalsIgnoreCase("ei")) {
-                System.out.println("Tagasi algusesse :)");
-                break;
-            }
-        }
-    }
-
+    //kontrollib kasutaja vastuste õigsust päris vastusega
+    //indeks1 = 0  ja indeks2 = 1 ss toimub täht -> morseks
+    //indeks1 = 1  ja indeks2 = 0 ss toimub morse -> täheks
     public boolean kontrolli(String kasutajaVastus, String küsimus, int indeks1, int indeks2){
         for (String[] paar : tähed) {
             if(paar[indeks1].equals(küsimus)){

@@ -18,6 +18,10 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,15 +29,15 @@ import java.util.Locale;
 
 public class Vaade extends Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        List<String[]> s = new ArrayList<>(Arrays.asList(new String[]{"KASS", "-*-/*-/***/***"}, new String[]{"KOER", "-*-/---/*/*-*"}, new String[]{"EMA", "*/--/*-"}, new String[]{"ISA", "**/***/*-"}));
+    public void start(Stage primaryStage) throws IOException {
+        List<String> sõnadFailist = loeFailistSõnad("sõnad.txt");
         Tähed tähed = new Tähed();
-        Sõnad sõnad = new Sõnad(s, tähed);
+        Sõnad sõnad = new Sõnad(sõnadFailist, tähed);
 
 
         //MAIN MENÜÜ
@@ -467,5 +471,17 @@ public class Vaade extends Application {
         primaryStage.setTitle("Morse koodi õppimine");
         primaryStage.setScene(main);
         primaryStage.show();
+    }
+
+    public static List<String> loeFailistSõnad(String failinimi) throws IOException {
+        List<String> sõnad = new ArrayList<>();
+        try(BufferedReader br =  new BufferedReader(new InputStreamReader(new FileInputStream(failinimi)))){
+            String rida = br.readLine();
+            while(rida != null){
+                sõnad.add(rida.toUpperCase(Locale.ROOT));
+                rida = br.readLine();
+            }
+        }
+        return sõnad;
     }
 }

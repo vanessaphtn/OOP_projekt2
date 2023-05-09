@@ -1,5 +1,7 @@
 package com.example.oop_projekt2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,26 +11,53 @@ public class Sõnad {
     private List<String[]> sõnad;
     private Tähed tähed;
 
-    public Sõnad(List<String[]> sõnad, Tähed tähed) {
-        this.sõnad = sõnad;
+    public Sõnad(List<String> sõnad, Tähed tähed) {
         this.tähed = tähed;
+        this.sõnad = lisaMorseKood(sõnad);
     }
 
+    //võtab suvalise sõnapaari (sõna + sõna morses) listist
     public String[] suvaline() {
         int suvalineIndeks = (int) (random() * sõnad.size());
         return sõnad.get(suvalineIndeks);
     }
 
-    public boolean kontrolli(String kasutajaVastus, String küsimus, int indeks1, int indeks2){
+    //kontrollib kasutaja vastuste õigsust päris vastusega
+    //indeks1 = 0  ja indeks2 = 1 ss toimub sõna -> morseks
+    //indeks1 = 1  ja indeks2 = 0 ss toimub morse -> sõnaks
+    public boolean kontrolli(String kasutajaVastus, String küsimus, int indeks1, int indeks2) {
         for (String[] sõna : sõnad) {
-            if(sõna[indeks1].equals(küsimus)){
+            if (sõna[indeks1].equals(küsimus)) {
                 String õigeVastus = sõna[indeks2];
-                if(õigeVastus.equals(kasutajaVastus)){
+                if (õigeVastus.equals(kasutajaVastus)) {
                     return true;
-                } return false;
+                }
+                return false;
             }
-        } return false;
+        }
+        return false;
     }
+
+    //teisendab failist loetud sõnad ka morse koodi ja tagastab listi, mis sisaldab sõnapaare (sõna + sõna morses)
+    public List<String[]> lisaMorseKood(List<String> sõnad) {
+        List<String[]> sõnaPaarideList = new ArrayList<>();
+
+        for (String sõna : sõnad) {
+            String morse = "";
+            for (Character täht : sõna.toCharArray()) {
+                for (int i = 0; i < tähed.getTähed().length; i++) {
+                    if (täht.toString().equals(tähed.getTähed()[i][0])) {
+                        morse += tähed.getTähed()[i][1] + "/";
+                    }
+                }
+            }
+            String sõnaMorses = morse.substring(0, morse.length()-1);
+            sõnaPaarideList.add(new String[]{sõna, sõnaMorses});
+            System.out.println(sõna + " " + sõnaMorses); //spikker et näha sõnu morse koodis
+        }
+        return sõnaPaarideList;
+    }
+
 
     //see vihje hakkab sõna algusest tähthaaval vastust andma
     void vihje(String sõna, int n, String lõikamine) {
@@ -49,82 +78,5 @@ public class Sõnad {
         }
 
     }
-
-    //sõna morsekeelseks sõnaks
-    /**public String sõnaTeisendus(String sõna, String lõikamine, String sidumine, int indeks1, int indeks2) {
-        String[] sõnaTähed = sõna.split(lõikamine);
-        String sõnaTeisendus = "";
-        Tähed tähed = new Tähed();
-
-        for (String s : sõnaTähed) {
-            for (int j = 0; j < tähed.getTähed().length; j++) {
-                if (s.equals(tähed.getTähed()[j][indeks1])) {
-                    sõnaTeisendus += tähed.getTähed()[j][indeks2] + sidumine;
-                }
-            }
-        }
-        if (sidumine.equals("/"))
-            sõnaTeisendus = sõnaTeisendus.substring(0, sõnaTeisendus.length() - 1); //kui seotakse "/" sellega, siis siin eemaltatakse viimane kaldkriips
-        return sõnaTeisendus;
-    } */
-
-    /**public void sõnaVõrdlus(String lõikamine, String sidumine, int indeks1, int indeks2) {
-
-        while (true) {
-            String suvalineSõna = suvaline();
-            String sõnaTeisendus = sõnaTeisendus(suvalineSõna, lõikamine, sidumine, indeks1, indeks2);
-            int valeVastus = 1;
-            int sõnaPikkus;
-
-            while (true) {
-
-                System.out.println("Teisenda sõna: " + suvalineSõna);
-                Scanner input = new Scanner(System.in);
-                System.out.print("Sisesta vastus: ");
-                String sisestus = input.nextLine();
-
-                if (sisestus.equals(sõnaTeisendus)) {
-                    System.out.println("Õige vastus! \n");
-                    break;
-
-                } else {
-                    System.out.println("Proovi uuesti! \n");
-
-                    if (sisestus.contains("?")) {
-                        System.out.print("vihje: ");
-                        vihje(sisestus, sõnaTeisendus,sidumine);
-                        System.out.println();
-
-                    } else {
-
-                        if (lõikamine.equals("")) sõnaPikkus = suvalineSõna.length(); //leiab sõna pikkuse
-                        else
-                            sõnaPikkus = sõnaTeisendus.length();   // kui sõna on algselt morse koodis, siis kasutab teisentatud sõna pikkust
-
-
-                        if (valeVastus < sõnaPikkus) {          //väljastab vihjeid kuni eelviimase täheni
-                            System.out.print("vihje: ");
-                            vihje(sõnaTeisendus, valeVastus++, sidumine);
-                            System.out.println();
-                        } else {
-                            System.out.println("Sõna '" + suvalineSõna + "' vastus oli '" + sõnaTeisendus + "'");
-                            break;
-                        }
-                    }
-                }
-            }
-
-            Scanner input1 = new Scanner(System.in);
-            System.out.print("Soovid jätkata? (jah/ei) ");
-            String jätkamine = input1.nextLine();
-
-            if (jätkamine.equalsIgnoreCase("ei")){
-                System.out.println("Tagasi algusesse :)");
-                break;
-            }
-        }
-    }
-}
- */
 
 }
