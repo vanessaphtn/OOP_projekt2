@@ -18,10 +18,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +26,7 @@ import java.util.Locale;
 
 public class Vaade extends Application {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -51,19 +48,27 @@ public class Vaade extends Application {
         Rectangle tähtMorseks = new Rectangle(40, 40, Color.PEACHPUFF);
         tähtMorseks.widthProperty().bind(primaryStage.widthProperty().divide(5));
         tähtMorseks.heightProperty().bind(tähtMorseks.widthProperty());
+        Text kiriTM = new Text("TÄHT");
+        StackPane kiriJaKujundTM = new StackPane(tähtMorseks, kiriTM);
         Rectangle morseTäheks = new Rectangle(40, 40, Color.SKYBLUE);
         morseTäheks.widthProperty().bind(primaryStage.widthProperty().divide(5));
         morseTäheks.heightProperty().bind(morseTäheks.widthProperty());
-        Rectangle sõnaMorseks = new Rectangle(40, 40, Color.BLUE);
+        Text kiriMT = new Text("-/*-*-/****/-");
+        StackPane kiriJaKujundMT = new StackPane(morseTäheks, kiriMT);
+        Rectangle sõnaMorseks = new Rectangle(40, 40, Color.PALEGREEN);
         sõnaMorseks.widthProperty().bind(primaryStage.widthProperty().divide(5));
         sõnaMorseks.heightProperty().bind(sõnaMorseks.widthProperty());
+        Text kiriSM = new Text("SÕNA");
+        StackPane kiriJaKujundSM = new StackPane(sõnaMorseks, kiriSM);
         Rectangle morseSõnaks = new Rectangle(40, 40, Color.HOTPINK);
         morseSõnaks.widthProperty().bind(primaryStage.widthProperty().divide(5));
         morseSõnaks.heightProperty().bind(morseSõnaks.widthProperty());
+        Text kiriMS = new Text("***/**--*/-*/*-");
+        StackPane kiriJaKujundMS = new StackPane(morseSõnaks, kiriMS);
 
 
-        HBox ülemine = new HBox(tähtMorseks, morseTäheks);
-        HBox alumine = new HBox(sõnaMorseks, morseSõnaks);
+        HBox ülemine = new HBox(kiriJaKujundTM, kiriJaKujundMT);
+        HBox alumine = new HBox(kiriJaKujundSM, kiriJaKujundMS);
         ülemine.setAlignment(Pos.CENTER);
         alumine.setAlignment(Pos.CENTER);
         ülemine.setSpacing(5);
@@ -83,9 +88,9 @@ public class Vaade extends Application {
         //juhised
         Text tekst = new Text(" Selles programmis saab 4 erinevat ülesannet lahendada: \n" +
                 "1) tähti morse koodi teisendada \n selleks klõpsa ruudul kirjaga TÄHT\n" +
-                "2) sõnasid morse koodi teisendada \n selleks klõpsa ruudul kirjaga SÕNA\n" +
-                "3) tähti morse koodist eesti keelde teisendada \n selleks klõpsa ruudul kirjaga" +
+                "2) tähti morse koodist eesti keelde teisendada \n selleks klõpsa ruudul kirjaga" +
                 " -/*-*-/****/- \n" +
+                "3) sõnasid morse koodi teisendada \n selleks klõpsa ruudul kirjaga SÕNA\n" +
                 "4) sõnasid morse koodist eesti keelde teisendada\n selleks klõpsa ruudul kirjaga" +
                 " ***/**--*/-*/*-");
 
@@ -112,8 +117,10 @@ public class Vaade extends Application {
         //nupud, mida vajutada
         Button tärn = new Button("*");
         Button kriips = new Button("-");
+        Button skipTM = new Button("Skip");
+        Button vihjeTM = new Button("Vihje");
 
-        HBox nupud = new HBox(tärn, kriips);
+        HBox nupud = new HBox(vihjeTM, tärn, kriips, skipTM);
         nupud.setAlignment(Pos.CENTER);
 
         TextField sisestus = new TextField();
@@ -151,6 +158,19 @@ public class Vaade extends Application {
             sisestus.appendText(kriipsuke);
         });
 
+        skipTM.setOnMouseClicked(event -> {// järgmise tähe näitamine
+            TMvastuseÕigsus.setText("");
+            tähed.setVihje(1);
+
+            TMsuvalineTäht.setText(tähed.suvaline()[0]);
+        });
+
+        vihjeTM.setOnMouseClicked(event -> {// vihje andmine
+            TMvastuseÕigsus.setText("");
+            sisestus.setText(tähed.vihje(TMsuvalineTäht.getText(), tähed.getVihje()));
+            tähed.setVihje(tähed.getVihje() + 1);
+        });
+
         TMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
             String sisestatudVastus = sisestus.getText();
             try {
@@ -161,16 +181,22 @@ public class Vaade extends Application {
                 }
                 if (tähed.kontrolli(sisestatudVastus, TMsuvalineTäht.getText(), 0, 1)) {
                     TMvastuseÕigsus.setText("Õige vastus!");
-                } else TMvastuseÕigsus.setText("Vale vastus!");
-                TMsuvalineTäht.setText(tähed.suvaline()[0]);
-                sisestus.setText("");
+                    TMsuvalineTäht.setText(tähed.suvaline()[0]);
+                    sisestus.setText("");
+                    tähed.setVihje(1);
+                } else {
+                    TMvastuseÕigsus.setText("Vale vastus!");
+                }
+
             } catch (ValeSisestusErind e) {
-                TMvastuseÕigsus.setText("Sisestada võib ainult * ja -");
+                TMvastuseÕigsus.setText(e.getMessage());
                 sisestus.setText("");
             }
         });
 
         tähtMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
+            tähed.setVihje(1);
+
             tähtMorseksLava.show();
             primaryStage.hide();
         });
@@ -178,13 +204,14 @@ public class Vaade extends Application {
         TMtagasi.setOnMouseClicked(event -> { //tagasi menüüsse
             TMsuvalineTäht.setText(tähed.suvaline()[0]);
             TMvastuseÕigsus.setText("");
+
             tähtMorseksLava.hide();
             primaryStage.show();
         });
 
         //juhised
         Text TMtekst = new Text("Kirjuta teksitlahtrisse oma vastuseks * ja - kombinatsioon või \n" +
-                "kasuta kirjutamiseks nuppe\n" +
+                "kasuta kirjutamiseks nuppe.\n" +
                 "Tulemuse teada saamiseks vajuta kontrolli nupul.");
 
         BorderPane TMjuhisJuur = new BorderPane(TMtekst);
@@ -215,11 +242,14 @@ public class Vaade extends Application {
         MTtekstiväli.setAlignment(Pos.CENTER);
 
         Text MTvastuseÕigsus = new Text("");
+        Button vihjeMT = new Button("Vihje");
+        Button skipMT = new Button("Skip");
+        HBox nupudMT = new HBox(vihjeMT, skipMT);
+        nupudMT.setAlignment(Pos.CENTER);
 
 
-        VBox MTkeskmineOsa = new VBox(MTküsimus, MTtekstiväli, MTvastuseÕigsus);
+        VBox MTkeskmineOsa = new VBox(MTküsimus, MTtekstiväli, MTvastuseÕigsus, nupudMT);
         MTkeskmineOsa.setAlignment(Pos.CENTER);
-
 
         Button MTtagasi = new Button("Tagasi");
         Button MTjuhis = new Button("?");
@@ -245,14 +275,26 @@ public class Vaade extends Application {
                 }
                 if (tähed.kontrolli(MTsisestatudVastus, MTsuvalineTäht.getText(), 1, 0)) {
                     MTvastuseÕigsus.setText("Õige vastus!");
+                    MTsuvalineTäht.setText(tähed.suvaline()[1]);
+                    MTsisestus.setText("");
                 } else MTvastuseÕigsus.setText("Vale vastus!");
-                MTsuvalineTäht.setText(tähed.suvaline()[1]);
-                MTsisestus.setText("");
             } catch (ValeSisestusErind e) {
-                MTvastuseÕigsus.setText("Sisestada võib ainult tähti");
+                MTvastuseÕigsus.setText(e.getMessage());
                 MTsisestus.setText("");
             }
 
+        });
+
+        skipMT.setOnMouseClicked(event -> {// järgmise tähe näitamine
+            MTvastuseÕigsus.setText("");
+            tähed.setVihje(1);
+
+            MTsuvalineTäht.setText(tähed.suvaline()[1]);
+        });
+
+        vihjeMT.setOnMouseClicked(event -> {// vihje andmine
+            MTvastuseÕigsus.setText("");
+            MTsisestus.setText(tähed.vihje(MTsuvalineTäht.getText(), tähed.getVihje()));
         });
 
 
@@ -295,9 +337,10 @@ public class Vaade extends Application {
         Button SMtärn = new Button("*");
         Button SMkriips = new Button("-");
         Button kaldkriips = new Button("/");
+        Button vihjeSM = new Button("Vihje");
+        Button skipSM = new Button("Skip");
 
-        HBox SMnupud = new HBox(SMtärn, SMkriips);
-        SMnupud.getChildren().add(kaldkriips);
+        HBox SMnupud = new HBox(vihjeSM, SMtärn, SMkriips, kaldkriips, skipSM);
         SMnupud.setAlignment(Pos.CENTER);
 
         TextField SMsisestus = new TextField();
@@ -317,7 +360,7 @@ public class Vaade extends Application {
         Button SMjuhis = new Button("?");
 
         BorderPane sõnaMorseksjuur = new BorderPane(SMkeskmineOsa);
-        sõnaMorseksjuur.setBackground(Background.fill(Color.rgb(122, 122, 250)));
+        sõnaMorseksjuur.setBackground(Background.fill(Color.rgb(180, 250, 150)));
         sõnaMorseksjuur.setBottom(SMtagasi);
         sõnaMorseksjuur.setRight(SMjuhis);
 
@@ -343,26 +386,55 @@ public class Vaade extends Application {
             SMsisestus.appendText(kaldkriipsuke);
         });
 
+        vihjeSM.setOnMouseClicked(event -> {
+            SMvastuseÕigsus.setText("");
+            SMsisestus.setText(sõnad.vihje(SMsuvalineSõna.getText(), sõnad.getVihje()));
+            sõnad.setVihje(sõnad.getVihje() + 1);
+        });
+
+        skipSM.setOnMouseClicked(event -> {
+            SMvastuseÕigsus.setText("");
+            SMsuvalineSõna.setText(sõnad.suvaline()[0]);
+            SMsisestus.setText("");
+            sõnad.setVihje(1);
+            sõnad.setKordusedValesti(0);
+        });
+
         SMnupp.setOnMouseClicked(event -> { // tegevused kui on 'kontrolli' nupp vajutatud
             String SMsisestatudVastus = SMsisestus.getText();
             try {
                 for (Character sümbol : SMsisestatudVastus.toCharArray()) {
                     if ("*-/".indexOf(sümbol) == -1) {
-                        throw new ValeSisestusErind("Sisestada võib ainult * ja -");
+                        throw new ValeSisestusErind("Sisestada võib ainult *, - ja /");
                     }
                 }
                 if (sõnad.kontrolli(SMsisestatudVastus, SMsuvalineSõna.getText(), 0, 1)) {
                     SMvastuseÕigsus.setText("Õige vastus!");
-                } else SMvastuseÕigsus.setText("Vale vastus!");
-                SMsuvalineSõna.setText(sõnad.suvaline()[0]);
-                SMsisestus.setText("");
+                    if (sõnad.getKordusedValesti() == 0) {//kui esimese korraga õigesti siis lisame sõna selgeks saanute hulka
+                        if (!sõnad.getSelged().contains(SMsisestus.getText())) {//ühekordselt kirja ainult
+                            sõnad.getSelged().add(SMsisestus.getText());
+                        }
+                    }
+                    SMsuvalineSõna.setText(sõnad.suvaline()[0]);
+                    SMsisestus.setText("");
+                    sõnad.setKordusedValesti(0);
+                    sõnad.setVihje(1);
+
+                } else {
+                    SMvastuseÕigsus.setText("Vale vastus!");
+                    sõnad.setKordusedValesti(sõnad.getKordusedValesti() + 1);
+                }
+
             } catch (ValeSisestusErind e) {
-                SMvastuseÕigsus.setText("Sisestada võib ainult *,- ja /");
+                SMvastuseÕigsus.setText(e.getMessage());
                 SMsisestus.setText("");
             }
         });
 
         sõnaMorseks.setOnMouseClicked(event -> { //ülesandesse minemine
+            sõnad.setVihje(1);
+            sõnad.setKordusedValesti(0);
+
             sõnaMorseksLava.show();
             primaryStage.hide();
         });
@@ -407,15 +479,19 @@ public class Vaade extends Application {
         MStekstiväli.setSpacing(5);
 
         Text MSvastuseÕigsus = new Text("");
+        Button vihjeMS = new Button("Vihje");
+        Button skipMS = new Button("Skip");
+        HBox nupudMS = new HBox(vihjeMS, skipMS);
+        nupudMS.setAlignment(Pos.CENTER);
 
-        VBox MSkeskmineOsa = new VBox(MSküsimus, MStekstiväli, MSvastuseÕigsus);
+        VBox MSkeskmineOsa = new VBox(MSküsimus, MStekstiväli, MSvastuseÕigsus, nupudMS);
         MSkeskmineOsa.setAlignment(Pos.CENTER);
 
         Button MStagasi = new Button("Tagasi");
         Button MSjuhis = new Button("?");
 
         BorderPane morseSõnaksjuur = new BorderPane(MSkeskmineOsa);
-        morseSõnaksjuur.setBackground(Background.fill(Color.rgb(250, 174, 212)));
+        morseSõnaksjuur.setBackground(Background.fill(Color.rgb(230, 174, 212)));
         morseSõnaksjuur.setBottom(MStagasi);
         morseSõnaksjuur.setRight(MSjuhis);
 
@@ -435,13 +511,36 @@ public class Vaade extends Application {
                 }
                 if (sõnad.kontrolli(MSsisestatudVastus, MSsuvalineSõna.getText(), 1, 0)) {
                     MSvastuseÕigsus.setText("Õige vastus!");
-                } else MSvastuseÕigsus.setText("Vale vastus!");
-                MSsuvalineSõna.setText(sõnad.suvaline()[1]);
-                MSsisestus.setText("");
+                    if (sõnad.getKordusedValesti() == 0) {
+                        if (!sõnad.getSelged().contains(MSsisestus.getText())) {
+                            sõnad.getSelged().add(MSsisestus.getText());
+                        }
+                    }
+                    MSsuvalineSõna.setText(sõnad.suvaline()[1]);
+                    MSsisestus.setText("");
+                } else {
+                    MSvastuseÕigsus.setText("Vale vastus!");
+                    sõnad.setKordusedValesti(sõnad.getKordusedValesti() + 1);
+                }
+
             } catch (ValeSisestusErind e) {
                 MSvastuseÕigsus.setText("Sisestada võib ainult tähti");
                 MSsisestus.setText("");
             }
+        });
+
+        vihjeMS.setOnMouseClicked(event -> {
+            MSvastuseÕigsus.setText("");
+            MSsisestus.setText(sõnad.vihje(MSsuvalineSõna.getText(), sõnad.getVihje()));
+            sõnad.setVihje(sõnad.getVihje() + 1);
+        });
+
+        skipMS.setOnMouseClicked(event -> {
+            MSvastuseÕigsus.setText("");
+            MSsuvalineSõna.setText(sõnad.suvaline()[1]);
+            MSsisestus.setText("");
+            sõnad.setVihje(1);
+            sõnad.setKordusedValesti(0);
         });
 
         morseSõnaks.setOnMouseClicked(event -> { //ülesande avamine
@@ -471,17 +570,61 @@ public class Vaade extends Application {
         primaryStage.setTitle("Morse koodi õppimine");
         primaryStage.setScene(main);
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> {
+            try {//millegi pärast ei lasknud teisiti teha TODO
+                kirjutaSõnadFaili(sõnad.getSelged());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        morseTäheksLava.setOnCloseRequest(event -> {
+            try {//millegi pärast ei lasknud teisiti teha TODO
+                kirjutaSõnadFaili(sõnad.getSelged());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        morseSõnaksLava.setOnCloseRequest(event -> {
+            try {//millegi pärast ei lasknud teisiti teha TODO
+                kirjutaSõnadFaili(sõnad.getSelged());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        sõnaMorseksLava.setOnCloseRequest(event -> {
+            try {//millegi pärast ei lasknud teisiti teha TODO
+                kirjutaSõnadFaili(sõnad.getSelged());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        tähtMorseksLava.setOnCloseRequest(event -> {
+            try {//millegi pärast ei lasknud teisiti teha TODO
+                kirjutaSõnadFaili(sõnad.getSelged());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public static List<String> loeFailistSõnad(String failinimi) throws IOException {
         List<String> sõnad = new ArrayList<>();
-        try(BufferedReader br =  new BufferedReader(new InputStreamReader(new FileInputStream(failinimi)))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(failinimi), "UTF-8"))) {
             String rida = br.readLine();
-            while(rida != null){
+            while (rida != null) {
                 sõnad.add(rida.toUpperCase(Locale.ROOT));
                 rida = br.readLine();
             }
         }
         return sõnad;
+    }
+
+    public static void kirjutaSõnadFaili(List<String> sõnad) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("täitsaSelged.txt"), "UTF-8"))) {
+            for (String sõna : sõnad) {
+                bw.write(sõna + "\n");
+            }
+        }
     }
 }
